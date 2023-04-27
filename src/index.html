@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Virtual Keyboard</title>
+  <link rel="stylesheet" href="/src/assets/css/normalize.css">
+  <link rel="stylesheet" href="/src/assets/css/style.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body class="body">
+  <h1 class="header">Virtual Keybord</h1>
+  <main class="main">
+    <div class="main__wrapper">
+      <section class="text">
+        <textarea class="text__enter" name="input box" id="text" cols="100" rows="10"></textarea>
+      </section>
+      <section class="keyboard">
+        <div class="keyboard__container">
+          <button class="keyboard__key" type="button">a</button>
+          <button class="keyboard__key key-max" type="button">
+            <span class="material-icons">backspace</span>
+          </button>
+          <button class="keyboard__key key-supermax" type="button">
+            <span class="material-icons">space_bar</span>
+          </button>
+          <button class="keyboard__key key-max key-active" type="button">
+            <span class="keyboard-name">Caps Lock</span>
+          </button>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="/src/assets/js/script.js"></script>
+</body>
+
+</html>

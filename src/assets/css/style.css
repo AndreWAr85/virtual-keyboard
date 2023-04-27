@@ -1,0 +1,97 @@
+:root {
+  --color-mastrer: #0f8b55;
+  --second-color:  #127449;
+  --third-color: #c2e1d4;
+  --fourth-color: #b2b7b5;
+  --border-shadow: 0px 0px 20px -10px var(--color-mastrer)
+}
+.body {
+  background: var(--fourth-color);
+  height: 1vh;
+  background: #000000 url(/src/assets/img/Wonderland.jpg) no-repeat;
+  background-size: 80%;
+  background-position-x: 100%;
+  background-position-y: 0%;
+}
+
+.header {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  margin: 30px;
+  text-align: center;
+  font-size: 5rem;
+  font-weight: 600;
+  text-shadow: 2px 2px 3px var(--second-color);
+  color: var(--color-mastrer);
+}
+.main__wrapper {
+  max-width: 1080px;
+  height: 700px;
+  margin: auto;
+  border-radius: 3px;
+  background: #c3f0de10;
+}
+.text__enter {
+  display: inline-block;
+  background-color: #00000000;
+  color: var(--fourth-color);
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  padding: 20px;
+  width: 94%;
+  font-size: 1.5rem;
+  margin: 30px 3%;
+  border: 1px solid #2f2f2f;
+  border-radius: 3px;
+ }
+.keyboard {
+  margin: 0px auto 30px auto;
+  width: 95%;
+  height: auto;
+  padding: 15px;
+  border-radius: 5px;
+  }
+
+.keyboard__container {
+  text-align: center;
+}
+
+.keyboard__key {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--color-mastrer);
+  width: 45px;
+  height: 45px;
+  border: 1px solid #257954;
+  border-radius: 5px;
+  background: var(--third-color);
+  margin: 2px;
+  cursor: pointer;
+  vertical-align: top;
+  padding: 0;
+  box-shadow: 2px 2px 1px 0px var(--fourth-color);
+}
+.keyboard__key:active {
+  transition: all 0.1s;
+  box-shadow: 1px 1px 1px 0px var(--fourth-color);
+  margin: 3px 1px 1px 3px; 
+}
+.keyboard-name {
+  font-size: 1.2rem;
+}
+.key-big {
+  width: 90px;
+}
+.key-max {
+  width: 110px;
+}
+.key-supermax {
+  width: 310px;
+}
+.key-active {
+  background: var(--fourth-color);
+  font-weight: 600;
+  border: 2px solid #257954;
+}
