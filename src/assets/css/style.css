@@ -1,8 +1,10 @@
 :root {
   --color-mastrer: #0f8b55;
   --second-color:  #127449;
-  --third-color: #c2e1d4;
-  --fourth-color: #b2b7b5;
+  --third-color: #c9f7e5;
+  --fourth-color: #81bba4;
+  --big-color: #90e2c4;
+  --active-color: #d9e897;
   --border-shadow: 0px 0px 20px -10px var(--color-mastrer)
 }
 .body {
@@ -23,7 +25,7 @@
   text-shadow: 2px 2px 3px var(--second-color);
   color: var(--color-mastrer);
 }
-.main__wrapper {
+.main {
   max-width: 1080px;
   height: 700px;
   margin: auto;
@@ -83,15 +85,18 @@
 }
 .key-big {
   width: 90px;
+  background: var(--big-color);
 }
 .key-max {
   width: 110px;
+  background: var(--big-color);
 }
 .key-supermax {
   width: 310px;
 }
 .key-active {
-  background: var(--fourth-color);
+  background: var(--active-color);
   font-weight: 600;
+  box-shadow: 1px 1px 1px 0px var(--active-color);
   border: 2px solid #257954;
 }
