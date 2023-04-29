@@ -1,14 +1,14 @@
 :root {
-  --color-mastrer: #0f8b55;
-  --second-color:  #127449;
+  --color-mastrer: #12794c;
+  --second-color:  #063a24;
   --third-color: #c9f7e5;
-  --fourth-color: #81bba4;
+  --fourth-color: #7bb69e;
   --big-color: #90e2c4;
   --active-color: #d9e897;
   --border-shadow: 0px 0px 20px -10px var(--color-mastrer)
 }
 .body {
-  background: var(--fourth-color);
+  background: var(--third-color);
   height: 1vh;
   background: #000000 url(/src/assets/img/Wonderland.jpg) no-repeat;
   background-size: 80%;
@@ -25,14 +25,12 @@
   text-shadow: 2px 2px 3px var(--second-color);
   color: var(--color-mastrer);
 }
-.main {
+.keyboard-container {
   max-width: 1080px;
   height: 700px;
   margin: auto;
-  border-radius: 3px;
-  background: #c3f0de10;
 }
-.text__enter {
+.input-text {
   display: inline-block;
   background-color: #00000000;
   color: var(--fourth-color);
@@ -44,7 +42,8 @@
   margin: 30px 3%;
   border: 1px solid #2f2f2f;
   border-radius: 3px;
- }
+}
+
 .keyboard {
   margin: 0px auto 30px auto;
   width: 80%;
@@ -54,7 +53,7 @@
   }
 
 
-.keyboard__key {
+.key {
   font-family: Georgia, 'Times New Roman', Times, serif;
   position: relative;
   display: inline-flex;
@@ -73,42 +72,26 @@
   padding: 0;
   box-shadow: 2px 2px 1px 0px var(--fourth-color);
 }
-.keyboard__key:active {
+.key:active {
   transition: all 0.1s;
   box-shadow: 1px 1px 1px 0px var(--fourth-color);
   margin: 5px 3px 3px 5px; 
 }
-.keyboard-name {
-  font-size: 1.2rem;
-}
-.key-static {
-  background: var(--big-color);
-}
-.key-nobig {
-  width: 60px;
-}
-.key-big {
-  width: 90px;
-}
-.key-max {
-  width: 110px;
-}
-.key-supermax {
-  width: 320px;
-}
 
-#shift-left {
-  width: 130px;
-}
 .key-active {
   background: var(--active-color);
   font-weight: 600;
   box-shadow: 1px 1px 1px 0px var(--active-color);
   border: 2px solid #257954;
 }
+
+.key-pressed {
+  background-color: #bfbfbf;
+}
+
 .row {
-  text-align: center;
+  width: 74%;
   display: flex;
-  justify-content: space-around;
+  justify-content: left;
   margin: 4px auto;
 }
