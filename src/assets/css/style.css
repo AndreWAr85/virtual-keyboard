@@ -46,15 +46,12 @@
  }
 .keyboard {
   margin: 0px auto 30px auto;
-  width: 95%;
+  width: 80%;
   height: auto;
   padding: 15px;
   border-radius: 5px;
   }
 
-.keyboard__container {
-  text-align: center;
-}
 
 .keyboard__key {
   font-family: Georgia, 'Times New Roman', Times, serif;
@@ -69,7 +66,7 @@
   border: 1px solid #257954;
   border-radius: 5px;
   background: var(--third-color);
-  margin: 2px;
+  margin: 4px;
   cursor: pointer;
   vertical-align: top;
   padding: 0;
@@ -78,25 +75,39 @@
 .keyboard__key:active {
   transition: all 0.1s;
   box-shadow: 1px 1px 1px 0px var(--fourth-color);
-  margin: 3px 1px 1px 3px; 
+  margin: 5px 3px 3px 5px; 
 }
 .keyboard-name {
   font-size: 1.2rem;
 }
+.key-static {
+  background: var(--big-color);
+}
+.key-nobig {
+  width: 60px;
+}
 .key-big {
   width: 90px;
-  background: var(--big-color);
 }
 .key-max {
   width: 110px;
-  background: var(--big-color);
 }
 .key-supermax {
-  width: 310px;
+  width: 320px;
+}
+
+#shift-left {
+  width: 130px;
 }
 .key-active {
   background: var(--active-color);
   font-weight: 600;
   box-shadow: 1px 1px 1px 0px var(--active-color);
   border: 2px solid #257954;
+}
+.row {
+  text-align: center;
+  display: flex;
+  justify-content: space-around;
+  margin: 4px auto;
 }
