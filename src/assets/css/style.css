@@ -52,7 +52,7 @@
   border-radius: 5px;
   }
 
-
+.language-switcher,
 .key {
   font-family: Georgia, 'Times New Roman', Times, serif;
   position: relative;
@@ -72,6 +72,8 @@
   padding: 0;
   box-shadow: 2px 2px 1px 0px var(--fourth-color);
 }
+
+.language-switcher:active,
 .key:active {
   transition: all 0.1s;
   box-shadow: 1px 1px 1px 0px var(--fourth-color);
@@ -94,4 +96,18 @@
   display: flex;
   justify-content: left;
   margin: 4px auto;
+}
+
+.language-switcher {
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  width: 90px;
+  height: 30px;
+}
+.capslock {
+  background-color: var(--big-color);
+}
+.on {
+  background-color: var(--active-color);
 }
