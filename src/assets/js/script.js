@@ -3,7 +3,7 @@ const engKeys = [
   ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\', 'Del'],
   ['CapsLock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", 'Enter'],
   ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', '▲', 'Shift'],
-  ['Ctrl', 'Win', 'Alt', '_', 'Alt', 'Ctrl', '◄', '▼', '►'],
+  ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '◄', '▼', '►'],
 ];
 
 const rusKeys = [
@@ -11,7 +11,7 @@ const rusKeys = [
   ['Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', '\\', 'Del'],
   ['CapsLock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'Enter'],
   ['Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '.', '▲', 'Shift'],
-  ['Ctrl', 'Win', 'Alt', '_', 'Alt', 'Ctrl', '◄', '▼', '►'],
+  ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '◄', '▼', '►'],
 ];
 
 let selectedLanguage = localStorage.getItem('selectedLanguage') || 'eng';
@@ -41,14 +41,12 @@ function changeLanguage() {
   });
 
   if (checkLocalStorage()) {
-    localStorage.setItem('selectedLanguage', JSON.stringify(selectedLanguage));
-  } else {
-    sessionStorage.setItem('selectedLanguage', JSON.stringify(selectedLanguage));
+    // сохранение выбранного языка в localStorage
+    localStorage.setItem('selectedLanguage', selectedLanguage);
   }
 }
 
-changeLanguage();
-
+// console.log(selectedLanguage);
 const keyboardContainer = document.createElement('div');
 keyboardContainer.classList.add('keyboard-container');
 const languageSwitcher = document.createElement('button');
@@ -71,6 +69,7 @@ currentKeys.forEach((rowKeys) => {
   rowKeys.forEach((currentKey) => {
     const keyElement = document.createElement('div');
     keyElement.classList.add('key');
+    keyElement.setAttribute('data-key', currentKey);
     keyElement.textContent = currentKey;
 
     // функция выделения кнопки клавиатуры при ее нажатии
@@ -79,29 +78,6 @@ currentKeys.forEach((rowKeys) => {
       setTimeout(() => elementToHighlight.classList.remove('active'), 200);
     }
 
-    // функция определения кода символа на физической клавиатуре
-    function getCharCode(key) {
-      const charCodes = {
-        Backspace: 8,
-        Tab: 9,
-        Enter: 13,
-        Shift: 16,
-        Ctrl: 17,
-        Alt: 18,
-        CapsLock: 20,
-        Win: 91,
-        Del: 46,
-        '▲': 38,
-        '◄': 37,
-        '▼': 40,
-        '►': 39,
-      };
-      return charCodes[key] || key.charCodeAt(0);
-    }
-
-    const keyCode = getCharCode(currentKey);
-
-    // функция вставки символа в текстовое поле
     function insertText(rowKey) {
       let valueToAdd;
       if (rowKey === 'Backspace') {
@@ -111,7 +87,7 @@ currentKeys.forEach((rowKeys) => {
         valueToAdd = '\n';
       } else if (rowKey === 'Tab') {
         valueToAdd = ' ';
-      } else if (rowKey === '▲' || rowKey === '◄' || rowKey === '▼' || rowKey === '►') {
+      } else if (rowKey === 'CapsLock' || rowKey === 'Shift' || rowKey === 'Ctrl' || rowKey === 'Alt' || rowKey === 'Win') {
         // игнорирование стрелок на клавиатуре
         return;
       } else {
@@ -120,19 +96,11 @@ currentKeys.forEach((rowKeys) => {
       textArea.value += valueToAdd;
     }
 
-    // обработчики событий нажатия кнопки мыши и клавиши на физической клавиатуре
+    // обработчики событий нажатия кнопки мыши и клавиши 
     keyElement.addEventListener('mousedown', () => {
       highlightKey(keyElement);
       insertText(currentKey);
     });
-
-    document.addEventListener('keydown', (event) => {
-      if (event.code === keyCode) {
-        highlightKey(keyElement);
-        insertText(currentKey);
-      }
-    });
-
     rowContainer.appendChild(keyElement);
   });
 
@@ -141,7 +109,7 @@ currentKeys.forEach((rowKeys) => {
 
 document.body.appendChild(keyboardContainer);
 
-// --------------------------******************************-------------------------------
+// --------------------------*STYLE*-------------------------------
 
 const keyStyleMap = {
   Backspace: {
@@ -158,7 +126,7 @@ const keyStyleMap = {
     fontSize: '18px',
   },
   CapsLock: {
-    backgroundColor: '#90e2c4',
+    // backgroundColor: '#90e2c4',
     width: '96px',
     fontSize: '18px',
     classList: ['capslock'],
@@ -214,10 +182,6 @@ const keyStyleMap = {
     fontSize: '18px',
     classList: ['shift'],
   },
-  _: {
-    width: '318px',
-    classList: ['space'],
-  },
 };
 
 const keys = document.querySelectorAll('.key');
@@ -225,9 +189,9 @@ keys.forEach((currentKey) => {
   const keyText = currentKey.textContent.trim();
   const keyStyles = keyStyleMap[keyText];
   if (keyStyles) {
-    const keyStylesObject = currentKey.style; // Создать новую переменную для объекта style
+    const keyStylesObject = currentKey.style;
     Object.keys(keyStyles).forEach((style) => {
-      keyStylesObject[style] = keyStyles[style]; // Использовать новую переменную вместо currentKey
+      keyStylesObject[style] = keyStyles[style];
     });
     if (keyStyles.classList) {
       keyStyles.classList.forEach((className) => {
@@ -243,3 +207,17 @@ if (secondShiftKey) {
   secondShiftKey.style.fontSize = '18px';
   secondShiftKey.style.width = '130px';
 }
+
+const space = document.querySelectorAll('.key');
+space.forEach((key) => {
+  if (key.textContent.includes(' ')) {
+    const keyCopy = key.cloneNode(true);
+    keyCopy.style.width = '318px';
+    key.parentNode.replaceChild(keyCopy, key);
+  }
+});
+//--------------------------------------------------------
+const capsLock = document.querySelector('.capslock');
+capsLock.addEventListener('click', () => {
+  capsLock.classList.toggle('on');
+});
