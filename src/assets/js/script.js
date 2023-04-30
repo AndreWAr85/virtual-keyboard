@@ -3,7 +3,7 @@ const engKeys = [
   ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\', 'Del'],
   ['CapsLock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", 'Enter'],
   ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', '▲', 'Shift'],
-  ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '◄', '▼', '►'],
+  ['Ctrl', 'Win', 'Alt', '_', 'Alt', 'Ctrl', '◄', '▼', '►'],
 ];
 
 const rusKeys = [
@@ -11,41 +11,125 @@ const rusKeys = [
   ['Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', '\\', 'Del'],
   ['CapsLock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'Enter'],
   ['Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '.', '▲', 'Shift'],
-  ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '◄', '▼', '►'],
+  ['Ctrl', 'Win', 'Alt', '_', 'Alt', 'Ctrl', '◄', '▼', '►'],
 ];
 
 let selectedLanguage = localStorage.getItem('selectedLanguage') || 'eng';
 let currentKeys = selectedLanguage === 'eng' ? engKeys : rusKeys;
 
+function checkLocalStorage() {
+  const testKey = 'test';
+  try {
+    localStorage.setItem(testKey, testKey);
+    localStorage.removeItem(testKey);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function changeLanguage() {
+  selectedLanguage = selectedLanguage === 'eng' ? 'rus' : 'eng';
+  currentKeys = selectedLanguage === 'eng' ? engKeys : rusKeys;
+
+  const keys = document.querySelectorAll('.key');
+  keys.forEach((key, index) => {
+    const currentKey = key;
+    if (currentKeys.flat()[index]) {
+      currentKey.textContent = currentKeys.flat()[index];
+    }
+  });
+
+  if (checkLocalStorage()) {
+    localStorage.setItem('selectedLanguage', JSON.stringify(selectedLanguage));
+  } else {
+    sessionStorage.setItem('selectedLanguage', JSON.stringify(selectedLanguage));
+  }
+}
+
+changeLanguage();
+
 const keyboardContainer = document.createElement('div');
 keyboardContainer.classList.add('keyboard-container');
+const languageSwitcher = document.createElement('button');
+languageSwitcher.classList.add('language-switcher');
+languageSwitcher.textContent = 'ENG/RUS';
 
+languageSwitcher.addEventListener('click', () => {
+  changeLanguage();
+});
+
+keyboardContainer.prepend(languageSwitcher);
 const textArea = document.createElement('textarea');
 textArea.classList.add('input-text');
 keyboardContainer.appendChild(textArea);
 
-currentKeys.forEach((row) => {
+currentKeys.forEach((rowKeys) => {
   const rowContainer = document.createElement('div');
   rowContainer.classList.add('row');
 
-  row.forEach((key) => {
+  rowKeys.forEach((currentKey) => {
     const keyElement = document.createElement('div');
     keyElement.classList.add('key');
-    keyElement.textContent = key;
+    keyElement.textContent = currentKey;
 
-    const keyCode = getCharCode(key);
-    console.log(keyCode);
+    // функция выделения кнопки клавиатуры при ее нажатии
+    function highlightKey(elementToHighlight) {
+      elementToHighlight.classList.add('active');
+      setTimeout(() => elementToHighlight.classList.remove('active'), 200);
+    }
+
+    // функция определения кода символа на физической клавиатуре
+    function getCharCode(key) {
+      const charCodes = {
+        Backspace: 8,
+        Tab: 9,
+        Enter: 13,
+        Shift: 16,
+        Ctrl: 17,
+        Alt: 18,
+        CapsLock: 20,
+        Win: 91,
+        Del: 46,
+        '▲': 38,
+        '◄': 37,
+        '▼': 40,
+        '►': 39,
+      };
+      return charCodes[key] || key.charCodeAt(0);
+    }
+
+    const keyCode = getCharCode(currentKey);
+
+    // функция вставки символа в текстовое поле
+    function insertText(rowKey) {
+      let valueToAdd;
+      if (rowKey === 'Backspace') {
+        textArea.value = textArea.value.slice(0, -1);
+        return;
+      } if (rowKey === 'Enter') {
+        valueToAdd = '\n';
+      } else if (rowKey === 'Tab') {
+        valueToAdd = ' ';
+      } else if (rowKey === '▲' || rowKey === '◄' || rowKey === '▼' || rowKey === '►') {
+        // игнорирование стрелок на клавиатуре
+        return;
+      } else {
+        valueToAdd = currentKey;
+      }
+      textArea.value += valueToAdd;
+    }
 
     // обработчики событий нажатия кнопки мыши и клавиши на физической клавиатуре
     keyElement.addEventListener('mousedown', () => {
       highlightKey(keyElement);
-      insertText(key);
+      insertText(currentKey);
     });
 
     document.addEventListener('keydown', (event) => {
       if (event.code === keyCode) {
         highlightKey(keyElement);
-        insertText(key);
+        insertText(currentKey);
       }
     });
 
@@ -57,168 +141,105 @@ currentKeys.forEach((row) => {
 
 document.body.appendChild(keyboardContainer);
 
-// функция определения кода символа на физической клавиатуре !!!!!!!!!!!!!!!!!!!!!!!!
-function getCharCode(key) {
-  const charCodes = {
-    Backspace: 8,
-    Tab: 9,
-    Enter: 13,
-    Shift: 16,
-    Ctrl: 17,
-    Alt: 18,
-    CapsLock: 20,
-    Win: 91,
-    Del: 46,
-    '▲': 38,
-    '◄': 37,
-    '▼': 40,
-    '►': 39,
-  };
+// --------------------------******************************-------------------------------
 
-  return charCodes[key] || key.charCodeAt(0);
-}
-
-// функция выделения кнопки клавиатуры при ее нажатии
-function highlightKey(keyElement) {
-  keyElement.classList.add('active');
-  setTimeout(() => keyElement.classList.remove('active'), 200);
-}
-
-document.addEventListener('keydown', highlightKey);
-
-// функция вставки символа в текстовое поле
-function insertText(key) {
-  let valueToAdd;
-  if (key === 'Backspace') {
-    textArea.value = textArea.value.slice(0, -1);
-    return;
-  } if (key === 'Enter') {
-    valueToAdd = '\n';
-  } else if (key === 'Tab') {
-    valueToAdd = ' ';
-  } else if (key === '▲' || key === '◄' || key === '▼' || key === '►') {
-    // игнорирование стрелок на клавиатуре
-    return;
-  } else {
-    valueToAdd = key;
-  }
-  textArea.value += valueToAdd;
-}
-
-// функция отображения виртуальной клавиатуры
-function renderKeyboard() {
-  const keyboardRows = document.querySelectorAll('.row');
-  keyboardRows.forEach((row, index) => {
-    const keys = row.querySelectorAll('.key');
-    keys.forEach((key, keyIndex) => {
-      key.textContent = currentKeys[index][keyIndex];
-    });
-  });
-}
-
-function changeLanguage() {
-  // изменение выбранного языка
-  selectedLanguage = selectedLanguage === 'eng' ? 'rus' : 'eng';
-  currentKeys = selectedLanguage === 'eng' ? engKeys : rusKeys;
-
-  // обновление надписей на кнопках клавиатуры
-  const keys = document.querySelectorAll('.key');
-  keys.forEach((key, index) => {
-    if (currentKeys.flat()[index]) {
-      key.textContent = currentKeys.flat()[index];
-    }
-  });
-
-  // сохранение выбранного языка в localStorage  НЕ РАБОТАЕТ
-  localStorage.setItem('selectedLanguage', selectedLanguage);
-}
-// неабор текста не меняется !!!!!!!!!
-
-const languageSwitchButton = document.createElement('button');
-languageSwitchButton.classList.add('language-switch-button');
-languageSwitchButton.textContent = 'LANGUAGE';
-document.body.appendChild(languageSwitchButton);
-
-languageSwitchButton.addEventListener('click', changeLanguage);
-// обработчик события смены языка клавиатуры по нажатию Ctrl + Shift НЕ РАБОТАЕТ
-document.addEventListener('keydown', (event) => {
-  if (event.ctrlKey && event.shiftKey) {
-    switchLanguage();
-  }
-});
+const keyStyleMap = {
+  Backspace: {
+    backgroundColor: '#90e2c4',
+    width: '100px',
+    fontSize: '18px',
+  },
+  Tab: {
+    backgroundColor: '#90e2c4',
+    fontSize: '18px',
+  },
+  Del: {
+    backgroundColor: '#90e2c4',
+    fontSize: '18px',
+  },
+  CapsLock: {
+    backgroundColor: '#90e2c4',
+    width: '96px',
+    fontSize: '18px',
+    classList: ['capslock'],
+  },
+  Enter: {
+    backgroundColor: '#90e2c4',
+    width: '100px',
+    fontSize: '18px',
+  },
+  '▲': {
+    backgroundColor: '#90e2c4',
+  },
+  Ctrl: {
+    backgroundColor: '#90e2c4',
+    width: '50px',
+    fontSize: '18px',
+    classList: ['control'],
+  },
+  Win: {
+    backgroundColor: '#90e2c4',
+    width: '50px',
+    fontSize: '18px',
+    classList: ['meta'],
+  },
+  ' ': {
+    width: '318px',
+  },
+  Alt: {
+    backgroundColor: '#90e2c4',
+    width: '50px',
+    fontSize: '18px',
+    classList: ['alt'],
+  },
+  '◄': {
+    backgroundColor: '#90e2c4',
+  },
+  '▼': {
+    backgroundColor: '#90e2c4',
+  },
+  '►': {
+    backgroundColor: '#90e2c4',
+    width: '64px',
+  },
+  '`': {
+    backgroundColor: '#90e2c4',
+  },
+  '\\': {
+    backgroundColor: '#90e2c4',
+  },
+  Shift: {
+    backgroundColor: '#90e2c4',
+    width: '65px',
+    fontSize: '18px',
+    classList: ['shift'],
+  },
+  _: {
+    width: '318px',
+    classList: ['space'],
+  },
+};
 
 const keys = document.querySelectorAll('.key');
-keys.forEach((key) => {
-  if (key.textContent.includes('Backspace')) {
-    key.style.backgroundColor = '#90e2c4';
-    key.style.width = '100px';
-    key.style.fontSize = '18px';
-  }
-  if (key.textContent.includes('Tab')) {
-    key.style.backgroundColor = '#90e2c4';
-    key.style.fontSize = '18px';
-  }
-  if (key.textContent.includes('Del')) {
-    key.style.backgroundColor = '#90e2c4';
-    key.style.fontSize = '18px';
-  }
-  if (key.textContent.includes('CapsLock')) {
-    key.style.backgroundColor = '#90e2c4';
-    key.style.width = '96px';
-    key.style.fontSize = '18px';
-  }
-  if (key.textContent.includes('Enter')) {
-    key.style.backgroundColor = '#90e2c4';
-    key.style.width = '100px';
-    key.style.fontSize = '18px';
-  }
-  if (key.textContent.includes('▲')) {
-    key.style.backgroundColor = '#90e2c4';
-  }
-  if (key.textContent.includes('Ctrl')) {
-    key.style.backgroundColor = '#90e2c4';
-    key.style.width = '50px';
-    key.style.fontSize = '18px';
-  }
-  if (key.textContent.includes('Win')) {
-    key.style.backgroundColor = '#90e2c4';
-    key.style.width = '50px';
-    key.style.fontSize = '18px';
-  }
-  if (key.textContent.includes(' ')) {
-    key.style.width = '318px';
-  }
-  if (key.textContent.includes('Alt')) {
-    key.style.backgroundColor = '#90e2c4';
-    key.style.width = '50px';
-    key.style.fontSize = '18px';
-  }
-  if (key.textContent.includes('◄')) {
-    key.style.backgroundColor = '#90e2c4';
-  }
-  if (key.textContent.includes('▼')) {
-    key.style.backgroundColor = '#90e2c4';
-  }
-  if (key.textContent.includes('►')) {
-    key.style.backgroundColor = '#90e2c4';
-    key.style.width = '64px';
-  }
-  if (key.textContent.includes('`')) {
-    key.style.backgroundColor = '#90e2c4';
-  }
-  if (key.textContent.includes('\\')) {
-    key.style.backgroundColor = '#90e2c4';
-  }
-  if (key.textContent.includes('Shift')) {
-    key.style.backgroundColor = '#90e2c4';
-    key.style.width = '65px';
-    key.style.fontSize = '18px';
-  }
-  const keys = document.querySelectorAll('.key');
-  const secondShiftKey = Array.from(keys).find((key, index) => index !== 0 && key.textContent.includes('Shift'));
-  if (secondShiftKey) {
-    secondShiftKey.style.backgroundColor = '#90e2c4';
-    secondShiftKey.style.fontSize = '18px';
-    secondShiftKey.style.width = '130px';
+keys.forEach((currentKey) => {
+  const keyText = currentKey.textContent.trim();
+  const keyStyles = keyStyleMap[keyText];
+  if (keyStyles) {
+    const keyStylesObject = currentKey.style; // Создать новую переменную для объекта style
+    Object.keys(keyStyles).forEach((style) => {
+      keyStylesObject[style] = keyStyles[style]; // Использовать новую переменную вместо currentKey
+    });
+    if (keyStyles.classList) {
+      keyStyles.classList.forEach((className) => {
+        currentKey.classList.add(className);
+      });
+    }
   }
 });
+
+const secondShiftKey = Array.from(keys).find((key, index) => index !== 0 && key.textContent.includes('Shift'));
+if (secondShiftKey) {
+  secondShiftKey.style.backgroundColor = '#90e2c4';
+  secondShiftKey.style.fontSize = '18px';
+  secondShiftKey.style.width = '130px';
+}
