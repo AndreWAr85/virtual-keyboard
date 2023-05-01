@@ -111,4 +111,11 @@
 .on {
   background-color: var(--active-color);
 }
-
+.coment {
+  text-align: center;
+  color: var(--color-mastrer);
+  font-size: 1.2rem;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-weight: 600;
+  text-shadow: 2px 2px 3px var(--second-color);
+}
