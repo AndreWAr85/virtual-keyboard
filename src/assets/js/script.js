@@ -1,17 +1,17 @@
 const engKeys = [
   ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
-  ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\', 'Del'],
+  ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\', 'Delete'],
   ['CapsLock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", 'Enter'],
   ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', '▲', 'Shift'],
-  ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '◄', '▼', '►'],
+  ['Control', 'Win', 'Alt', ' ', 'Alt', 'Control', '◄', '▼', '►'],
 ];
 
 const rusKeys = [
   ['ё', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
-  ['Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', '\\', 'Del'],
+  ['Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', '\\', 'Delete'],
   ['CapsLock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'Enter'],
   ['Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '.', '▲', 'Shift'],
-  ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '◄', '▼', '►'],
+  ['Control', 'Win', 'Alt', ' ', 'Alt', 'Control', '◄', '▼', '►'],
 ];
 
 let selectedLanguage = localStorage.getItem('selectedLanguage') || 'eng';
@@ -52,11 +52,33 @@ keyboardContainer.classList.add('keyboard-container');
 const languageSwitcher = document.createElement('button');
 languageSwitcher.classList.add('language-switcher');
 languageSwitcher.textContent = 'ENG/RUS';
-
+//---------------------------------------------------------------------
 languageSwitcher.addEventListener('click', () => {
   changeLanguage();
 });
 
+let isShiftPressed = false;
+let isCtrlPressed = false;
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Shift') {
+    isShiftPressed = true;
+  } else if (event.key === 'Control') {
+    isCtrlPressed = true;
+  } else if (isShiftPressed && isCtrlPressed) {
+    changeLanguage();
+  }
+});
+
+document.addEventListener('keyup', (event) => {
+  if (event.key === 'Shift') {
+    isShiftPressed = false;
+  } else if (event.key === 'Control') {
+    isCtrlPressed = false;
+  }
+});
+
+//--------------------------------------------------------------------
 keyboardContainer.prepend(languageSwitcher);
 const textArea = document.createElement('textarea');
 textArea.classList.add('input-text');
@@ -69,14 +91,7 @@ currentKeys.forEach((rowKeys) => {
   rowKeys.forEach((currentKey) => {
     const keyElement = document.createElement('div');
     keyElement.classList.add('key');
-    keyElement.setAttribute('data-key', currentKey);
     keyElement.textContent = currentKey;
-
-    // функция выделения кнопки клавиатуры при ее нажатии
-    function highlightKey(elementToHighlight) {
-      elementToHighlight.classList.add('active');
-      setTimeout(() => elementToHighlight.classList.remove('active'), 200);
-    }
 
     function insertText(rowKey) {
       let valueToAdd;
@@ -87,7 +102,7 @@ currentKeys.forEach((rowKeys) => {
         valueToAdd = '\n';
       } else if (rowKey === 'Tab') {
         valueToAdd = ' ';
-      } else if (rowKey === 'CapsLock' || rowKey === 'Shift' || rowKey === 'Ctrl' || rowKey === 'Alt' || rowKey === 'Win') {
+      } else if (rowKey === 'CapsLock' || rowKey === 'Shift' || rowKey === 'Control' || rowKey === 'Alt' || rowKey === 'Win' || rowKey === 'Delete') {
         // игнорирование стрелок на клавиатуре
         return;
       } else {
@@ -96,11 +111,50 @@ currentKeys.forEach((rowKeys) => {
       textArea.value += valueToAdd;
     }
 
-    // обработчики событий нажатия кнопки мыши и клавиши 
+    function highlightKey(elementToHighlight) {
+      if (elementToHighlight) {
+        elementToHighlight.classList.add('active');
+        setTimeout(() => elementToHighlight.classList.remove('active'), 200);
+      }
+    }
+    // обработчики событий нажатия кнопки мыши и клавиши на виртуальной клавиатуре
     keyElement.addEventListener('mousedown', () => {
       highlightKey(keyElement);
       insertText(currentKey);
     });
+    //-------------------------------------------
+
+    // Обработчик события нажатия клавиши на физической клавиатуре
+    document.addEventListener('keydown', (event) => {
+      const pressedKey = event.key;
+      // console.log(pressedKey)
+      const virtualKeys = document.querySelectorAll('.key');
+      virtualKeys.forEach((key) => {
+        if (key.textContent === pressedKey) {
+          key.classList.add('active');
+        }
+        if (key.textContent === 'CapsLock') {
+          const capsLockKeys = document.querySelectorAll('.capslock');
+          capsLockKeys.forEach((capsLockKey) => {
+            capsLockKey.classList.toggle('on');
+          });
+        }
+      });
+    });
+
+    // Обработчик события отжатия клавиши на физической клавиатуре
+    document.addEventListener('keyup', (event) => {
+      const pressedKey = event.key;
+      const virtualKeys = document.querySelectorAll('.key');
+      virtualKeys.forEach((key) => {
+        if (key.textContent === pressedKey) {
+          key.classList.remove('active');
+        }
+      });
+    });
+
+    //------------------------------------------
+
     rowContainer.appendChild(keyElement);
   });
 
@@ -121,9 +175,9 @@ const keyStyleMap = {
     backgroundColor: '#90e2c4',
     fontSize: '18px',
   },
-  Del: {
+  Delete: {
     backgroundColor: '#90e2c4',
-    fontSize: '18px',
+    fontSize: '14px',
   },
   CapsLock: {
     // backgroundColor: '#90e2c4',
@@ -139,10 +193,10 @@ const keyStyleMap = {
   '▲': {
     backgroundColor: '#90e2c4',
   },
-  Ctrl: {
+  Control: {
     backgroundColor: '#90e2c4',
     width: '50px',
-    fontSize: '18px',
+    fontSize: '12px',
     classList: ['control'],
   },
   Win: {
@@ -173,6 +227,9 @@ const keyStyleMap = {
   '`': {
     backgroundColor: '#90e2c4',
   },
+  'ё': {
+    backgroundColor: '#90e2c4',
+  },
   '\\': {
     backgroundColor: '#90e2c4',
   },
@@ -189,10 +246,11 @@ keys.forEach((currentKey) => {
   const keyText = currentKey.textContent.trim();
   const keyStyles = keyStyleMap[keyText];
   if (keyStyles) {
-    const keyStylesObject = currentKey.style;
+    const keyStylesObject = {};
     Object.keys(keyStyles).forEach((style) => {
       keyStylesObject[style] = keyStyles[style];
     });
+    Object.assign(currentKey.style, keyStylesObject);
     if (keyStyles.classList) {
       keyStyles.classList.forEach((className) => {
         currentKey.classList.add(className);
@@ -216,8 +274,20 @@ space.forEach((key) => {
     key.parentNode.replaceChild(keyCopy, key);
   }
 });
-//--------------------------------------------------------
+//----------------
+// Функция для изменения регистра текста клавиши в зависимости от состояния Caps Lock
 const capsLock = document.querySelector('.capslock');
 capsLock.addEventListener('click', () => {
   capsLock.classList.toggle('on');
+  keys.forEach((key) => {
+    let newTextContent = key.textContent;
+    if (capsLock.classList.contains('on')) {
+      if (newTextContent.trim().length <= 1) {
+        newTextContent = newTextContent.toUpperCase();
+      }
+    } else if (newTextContent.trim().length <= 1) {
+      newTextContent = newTextContent.toLowerCase();
+    }
+    key.textContent = newTextContent;
+  });
 });
