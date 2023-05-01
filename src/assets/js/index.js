@@ -227,7 +227,7 @@ const keyStyleMap = {
   '`': {
     backgroundColor: '#90e2c4',
   },
-  'ё': {
+  ё: {
     backgroundColor: '#90e2c4',
   },
   '\\': {
