@@ -102,8 +102,8 @@
   font-size: 14px;
   font-weight: 600;
   border-radius: 10px;
-  width: 90px;
-  height: 30px;
+  width: 100px;
+  height: 40px;
 }
 .capslock {
   background-color: var(--big-color);
