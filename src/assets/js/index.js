@@ -1,6 +1,21 @@
 import { rusKeys, engKeys } from './keyboardLayaut.js';
 import { keyStyleMap } from './style.js';
 
+const myHeader = document.createElement('h1');
+myHeader.className = 'header';
+myHeader.textContent = 'Virtual Keyboard';
+
+const div = document.createElement('div');
+div.className = 'comment';
+div.textContent = 'created in the Windows operating systems';
+
+const body = document.querySelector('body');
+
+// add the new elements to the body
+body.appendChild(myHeader);
+body.appendChild(div);
+
+
 let selectedLanguage = localStorage.getItem('selectedLanguage') || 'eng';
 let currentKeys = selectedLanguage === 'eng' ? engKeys : rusKeys;
 

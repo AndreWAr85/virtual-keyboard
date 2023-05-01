@@ -111,7 +111,7 @@
 .on {
   background-color: var(--active-color);
 }
-.coment {
+.comment {
   text-align: center;
   color: var(--color-mastrer);
   font-size: 1.2rem;
