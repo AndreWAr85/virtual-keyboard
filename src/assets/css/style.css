@@ -10,7 +10,7 @@
 .body {
   background: var(--third-color);
   height: 1vh;
-  background: #000000 url(/src/assets/img/Wonderland.jpg) no-repeat;
+  background: #000000 url(../img/Wonderland.jpg) no-repeat;
   background-size: 80%;
   background-position-x: 100%;
   background-position-y: 0%;
