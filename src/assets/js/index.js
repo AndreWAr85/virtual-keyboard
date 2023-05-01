@@ -1,18 +1,5 @@
-const engKeys = [
-  ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
-  ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\', 'Delete'],
-  ['CapsLock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", 'Enter'],
-  ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', '▲', 'Shift'],
-  ['Control', 'Win', 'Alt', ' ', 'Alt', 'Control', '◄', '▼', '►'],
-];
-
-const rusKeys = [
-  ['ё', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
-  ['Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', '\\', 'Delete'],
-  ['CapsLock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'Enter'],
-  ['Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '.', '▲', 'Shift'],
-  ['Control', 'Win', 'Alt', ' ', 'Alt', 'Control', '◄', '▼', '►'],
-];
+import { rusKeys, engKeys } from './keyboardLayaut.js';
+import { keyStyleMap } from './style.js';
 
 let selectedLanguage = localStorage.getItem('selectedLanguage') || 'eng';
 let currentKeys = selectedLanguage === 'eng' ? engKeys : rusKeys;
@@ -41,49 +28,50 @@ function changeLanguage() {
   });
 
   if (checkLocalStorage()) {
-    // сохранение выбранного языка в localStorage
     localStorage.setItem('selectedLanguage', selectedLanguage);
   }
 }
-
-// console.log(selectedLanguage);
+// Создаем контейнер клавиатуры и добавляем кнопку для смены языка
 const keyboardContainer = document.createElement('div');
-keyboardContainer.classList.add('keyboard-container');
+keyboardContainer.className = 'keyboard-container';
 const languageSwitcher = document.createElement('button');
-languageSwitcher.classList.add('language-switcher');
-languageSwitcher.textContent = 'ENG/RUS';
-//---------------------------------------------------------------------
+languageSwitcher.className = 'language-switcher';
+languageSwitcher.textContent = 'ENG/RUS  Alt+Shift';
+keyboardContainer.appendChild(languageSwitcher);
+
 languageSwitcher.addEventListener('click', () => {
   changeLanguage();
 });
 
+// Обработчик нажатия на клавиши Shift и Ctrl для смены языка
 let isShiftPressed = false;
 let isCtrlPressed = false;
-
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Shift') {
     isShiftPressed = true;
-  } else if (event.key === 'Control') {
+  } if (event.key === 'Alt') {
     isCtrlPressed = true;
   } else if (isShiftPressed && isCtrlPressed) {
     changeLanguage();
   }
 });
-
 document.addEventListener('keyup', (event) => {
   if (event.key === 'Shift') {
     isShiftPressed = false;
-  } else if (event.key === 'Control') {
+  } else if (event.key === 'Alt') {
     isCtrlPressed = false;
   }
 });
 
-//--------------------------------------------------------------------
 keyboardContainer.prepend(languageSwitcher);
 const textArea = document.createElement('textarea');
 textArea.classList.add('input-text');
 keyboardContainer.appendChild(textArea);
-
+window.addEventListener('DOMContentLoaded', () => {
+  textArea.classList.add('input-text');
+  textArea.focus();
+});
+textArea.focus();
 currentKeys.forEach((rowKeys) => {
   const rowContainer = document.createElement('div');
   rowContainer.classList.add('row');
@@ -92,7 +80,6 @@ currentKeys.forEach((rowKeys) => {
     const keyElement = document.createElement('div');
     keyElement.classList.add('key');
     keyElement.textContent = currentKey;
-
     function insertText(rowKey) {
       let valueToAdd;
       if (rowKey === 'Backspace') {
@@ -102,11 +89,18 @@ currentKeys.forEach((rowKeys) => {
         valueToAdd = '\n';
       } else if (rowKey === 'Tab') {
         valueToAdd = ' ';
-      } else if (rowKey === 'CapsLock' || rowKey === 'Shift' || rowKey === 'Control' || rowKey === 'Alt' || rowKey === 'Win' || rowKey === 'Delete') {
-        // игнорирование стрелок на клавиатуре
+      } else if (rowKey === 'CapsLock' || rowKey === 'Shift' || rowKey === 'Control' || rowKey === 'Alt' || rowKey === 'Win') {
+        return;
+      } else if (rowKey === 'Delete') {
+        const cursorPosition = textArea.selectionStart;
+        const textBeforeCursor = textArea.value.slice(0, cursorPosition);
+        const textAfterCursor = textArea.value.slice(cursorPosition + 1);
+        textArea.value = textBeforeCursor + textAfterCursor;
+        textArea.selectionStart = cursorPosition;
+        textArea.selectionEnd = cursorPosition;
         return;
       } else {
-        valueToAdd = currentKey;
+        valueToAdd = keyElement.textContent;
       }
       textArea.value += valueToAdd;
     }
@@ -122,38 +116,6 @@ currentKeys.forEach((rowKeys) => {
       highlightKey(keyElement);
       insertText(currentKey);
     });
-    //-------------------------------------------
-
-    // Обработчик события нажатия клавиши на физической клавиатуре
-    document.addEventListener('keydown', (event) => {
-      const pressedKey = event.key;
-      // console.log(pressedKey)
-      const virtualKeys = document.querySelectorAll('.key');
-      virtualKeys.forEach((key) => {
-        if (key.textContent === pressedKey) {
-          key.classList.add('active');
-        }
-        if (key.textContent === 'CapsLock') {
-          const capsLockKeys = document.querySelectorAll('.capslock');
-          capsLockKeys.forEach((capsLockKey) => {
-            capsLockKey.classList.toggle('on');
-          });
-        }
-      });
-    });
-
-    // Обработчик события отжатия клавиши на физической клавиатуре
-    document.addEventListener('keyup', (event) => {
-      const pressedKey = event.key;
-      const virtualKeys = document.querySelectorAll('.key');
-      virtualKeys.forEach((key) => {
-        if (key.textContent === pressedKey) {
-          key.classList.remove('active');
-        }
-      });
-    });
-
-    //------------------------------------------
 
     rowContainer.appendChild(keyElement);
   });
@@ -162,84 +124,6 @@ currentKeys.forEach((rowKeys) => {
 });
 
 document.body.appendChild(keyboardContainer);
-
-// --------------------------*STYLE*-------------------------------
-
-const keyStyleMap = {
-  Backspace: {
-    backgroundColor: '#90e2c4',
-    width: '100px',
-    fontSize: '18px',
-  },
-  Tab: {
-    backgroundColor: '#90e2c4',
-    fontSize: '18px',
-  },
-  Delete: {
-    backgroundColor: '#90e2c4',
-    fontSize: '14px',
-  },
-  CapsLock: {
-    // backgroundColor: '#90e2c4',
-    width: '96px',
-    fontSize: '18px',
-    classList: ['capslock'],
-  },
-  Enter: {
-    backgroundColor: '#90e2c4',
-    width: '100px',
-    fontSize: '18px',
-  },
-  '▲': {
-    backgroundColor: '#90e2c4',
-  },
-  Control: {
-    backgroundColor: '#90e2c4',
-    width: '50px',
-    fontSize: '12px',
-    classList: ['control'],
-  },
-  Win: {
-    backgroundColor: '#90e2c4',
-    width: '50px',
-    fontSize: '18px',
-    classList: ['meta'],
-  },
-  ' ': {
-    width: '318px',
-  },
-  Alt: {
-    backgroundColor: '#90e2c4',
-    width: '50px',
-    fontSize: '18px',
-    classList: ['alt'],
-  },
-  '◄': {
-    backgroundColor: '#90e2c4',
-  },
-  '▼': {
-    backgroundColor: '#90e2c4',
-  },
-  '►': {
-    backgroundColor: '#90e2c4',
-    width: '64px',
-  },
-  '`': {
-    backgroundColor: '#90e2c4',
-  },
-  'ё': {
-    backgroundColor: '#90e2c4',
-  },
-  '\\': {
-    backgroundColor: '#90e2c4',
-  },
-  Shift: {
-    backgroundColor: '#90e2c4',
-    width: '65px',
-    fontSize: '18px',
-    classList: ['shift'],
-  },
-};
 
 const keys = document.querySelectorAll('.key');
 keys.forEach((currentKey) => {
@@ -274,8 +158,58 @@ space.forEach((key) => {
     key.parentNode.replaceChild(keyCopy, key);
   }
 });
-//----------------
+
 // Функция для изменения регистра текста клавиши в зависимости от состояния Caps Lock
+let capsLockPressed = false;
+
+document.addEventListener('keydown', (event) => {
+  const pressedKey = event.key;
+  const virtualKeys = document.querySelectorAll('.key');
+  virtualKeys.forEach((key) => {
+    if (key.textContent === pressedKey) {
+      key.classList.add('active');
+    }
+  });
+
+  if (pressedKey === 'CapsLock' && !capsLockPressed) {
+    const capsLockKeys = document.querySelectorAll('.capslock');
+    capsLockKeys.forEach((capsLockKey) => {
+      capsLockKey.classList.add('on');
+    });
+    capsLockPressed = true;
+    keys.forEach((key) => {
+      let newTextContent = key.textContent;
+      if (newTextContent.trim().length <= 1) {
+        newTextContent = newTextContent.toUpperCase();
+      }
+      key.textContent = newTextContent;
+    });
+  } else if (pressedKey === 'CapsLock' && capsLockPressed) {
+    const capsLockKeys = document.querySelectorAll('.capslock');
+    capsLockKeys.forEach((capsLockKey) => {
+      capsLockKey.classList.remove('on');
+    });
+    capsLockPressed = false;
+    keys.forEach((key) => {
+      let newTextContent = key.textContent;
+      if (newTextContent.trim().length <= 1) {
+        newTextContent = newTextContent.toLowerCase();
+      }
+      key.textContent = newTextContent;
+    });
+  }
+});
+
+document.addEventListener('keyup', (event) => {
+  const pressedKey = event.key;
+  const virtualKeys = document.querySelectorAll('.key');
+  virtualKeys.forEach((key) => {
+    if (key.textContent === pressedKey) {
+      key.classList.remove('active');
+    }
+  });
+});
+
 const capsLock = document.querySelector('.capslock');
 capsLock.addEventListener('click', () => {
   capsLock.classList.toggle('on');
